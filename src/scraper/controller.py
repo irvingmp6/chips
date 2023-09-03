@@ -69,7 +69,7 @@ class Controller:
                     print(page.soup.get_text())
                 except UnicodeEncodeError as e:
                     if verbose:
-                        print(f"parent URL::: {page.url} | Error::: {e}")
+                        print(f"URL::: {page.url} | Error::: {e}")
                     continue
 
     def _get_potential_pages(self, parent_pages) -> list:
