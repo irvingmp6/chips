@@ -21,6 +21,6 @@ class Scraper:
 
         except requests.exceptions.ConnectTimeout as e:
             if verbose:
-                print(e)
+                print(f"URL::: {url} | Response::: {response.status_code}")
 
         return soup
