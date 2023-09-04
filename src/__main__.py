@@ -29,6 +29,12 @@ def get_args():
         help=textwrap.dedent(help_menu['exclude-domains'])
     )
     mutually_exclusive_group.add_argument(
+        '--exclude-domains-from-file',
+        type=open_txt_file,
+        default=None,
+        help=textwrap.dedent(help_menu['exclude-domains-from-file'])
+    )
+    mutually_exclusive_group.add_argument(
         '--only-domains',
         nargs='+',
         default=[],

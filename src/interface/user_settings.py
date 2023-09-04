@@ -15,17 +15,19 @@ class UserSettings:
     def _get_excluded_domains(self):
         domains = ["google.com"]
         domains.extend(self.args.exclude_domains)
+        file = self.args.exclude_domains_from_file
+        domains.extend(self._get_domains_from_file(file))
         return domains
 
     def _get_domains_of_interest(self):
         doi = self.args.only_domains
         if len(doi):
             return doi
-        return self._get_domains_of_interest_from_file()
-        
-    def _get_domains_of_interest_from_file(self):
-        doi = []
         file = self.args.only_domains_from_file
+        return self._get_domains_from_file(file)
+        
+    def _get_domains_from_file(self, file):
+        doi = []
         if file:
             with open(file) as f:
                 for r in f:
