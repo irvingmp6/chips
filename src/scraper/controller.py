@@ -140,7 +140,8 @@ class Controller:
         with open("chips.txt", "w") as f:
             for r in self.results:
                 try:
-                    f.write(r+"\n++++++++++++++++++++++++\n++++++++++++++++++++++++\n")
+                    f.write(r)
+                    f.write("\n++++++++++++++++++++++++\n++++++++++++++++++++++++\n")
                 except TypeError:
                     continue
 

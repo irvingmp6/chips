@@ -4,6 +4,7 @@ def get_help_menu() -> dict:
     menu['desc'] = """A command-line tool that returns results from mainstream search engines."""
     menu['exclude-domains'] = """Specifies the domain(s) the search should exclude"""
     menu['only-domains'] = """Specifies the domain(s) the search should focus on"""
+    menu['only-domains-from-file'] = """Specifies the domain(s) the search should focus on from txt file"""
     menu['timeout'] = """Specifies the timeout threshold per search request"""
     menu['verbose'] = """Shows activity as standard out"""
     menu['save-results'] = """Writes the text from each visited page to file called chips.txt"""

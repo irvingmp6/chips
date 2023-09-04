@@ -4,6 +4,8 @@ import textwrap
 from _version import __version__
 
 from src.interface.interface_text import get_help_menu
+from src.interface.interface_funcs import open_txt_file
+from src.interface.interface_funcs import WrongFileExtension
 from src.scraper.controller import Controller
 
 def get_args():
@@ -31,6 +33,12 @@ def get_args():
         nargs='+',
         default=[],
         help=textwrap.dedent(help_menu['only-domains'])
+    )
+    mutually_exclusive_group.add_argument(
+        '--only-domains-from-file',
+        type=open_txt_file,
+        default=None,
+        help=textwrap.dedent(help_menu['only-domains-from-file'])
     )
     cli.add_argument(
         '--debug', 
@@ -71,9 +79,13 @@ def get_args():
     return cli.parse_args()
 
 def main():
-    args = get_args()
-    controller = Controller(args)
-    controller.start_process()
+    try:
+        args = get_args()
+        controller = Controller(args)
+        controller.start_process()
+
+    except (WrongFileExtension, FileNotFoundError) as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()
