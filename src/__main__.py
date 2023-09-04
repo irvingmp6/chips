@@ -4,6 +4,8 @@ import textwrap
 from _version import __version__
 
 from src.interface.interface_text import get_help_menu
+from src.interface.interface_funcs import open_txt_file
+from src.interface.interface_funcs import WrongFileExtension
 from src.scraper.controller import Controller
 
 def get_args():
@@ -12,6 +14,12 @@ def get_args():
         prog='chips',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent(help_menu['desc'])
+    )
+    cli.add_argument(
+        'search_phrases',
+        metavar='<SEARCH PHRASE(S)>',
+        nargs='+',
+        help=textwrap.dedent(help_menu['search_phrase'])
     )
     mutually_exclusive_group = cli.add_mutually_exclusive_group()
     mutually_exclusive_group.add_argument(
@@ -26,12 +34,27 @@ def get_args():
         default=[],
         help=textwrap.dedent(help_menu['only-domains'])
     )
-    cli.add_argument(
-        'search_phrases',
-        metavar='<SEARCH PHRASE(S)>',
-        nargs='+',
-        help=textwrap.dedent(help_menu['search_phrase'])
+    mutually_exclusive_group.add_argument(
+        '--only-domains-from-file',
+        type=open_txt_file,
+        default=None,
+        help=textwrap.dedent(help_menu['only-domains-from-file'])
     )
+    cli.add_argument(
+        '--debug', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['debug'])
+        )
+    cli.add_argument(
+        '--save-results', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['save-results'])
+        )
+    cli.add_argument(
+        '--save-urls', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['save-urls'])
+        )
     cli.add_argument(
         '--search-engines',
         nargs='+',
@@ -56,9 +79,13 @@ def get_args():
     return cli.parse_args()
 
 def main():
-    args = get_args()
-    controller = Controller(args)
-    controller.search()
+    try:
+        args = get_args()
+        controller = Controller(args)
+        controller.start_process()
+
+    except (WrongFileExtension, FileNotFoundError) as e:
+        print(f"Error: {e}")
 
 if __name__ == "__main__":
     main()

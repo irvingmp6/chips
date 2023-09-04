@@ -3,7 +3,7 @@ import requests
 
 class Scraper:
     @staticmethod
-    def scrape_website(url, timeout, verbose=False):
+    def scrape_website(url, timeout, verbose=False, debug=False):
         soup = ""
         try:
             response = requests.get(url, timeout=timeout)

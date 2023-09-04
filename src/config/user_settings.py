@@ -2,16 +2,35 @@ class UserSettings:
     def __init__(self, args):
         self.args = args
         self.excluded_domains = self._get_excluded_domains()
-        self.domains_of_interest = args.only_domains
+        self.domains_of_interest = self._get_domains_of_interest()
         self.timeout = args.timeout
         self.verbose = self.args.verbose
         self.search_phrases = self.args.search_phrases
         self.search_engines = self._get_search_engines()
+        self.save_results = self.args.save_results
+        self.save_urls = self.args.save_urls
+        self.debug = self.args.debug
 
     def _get_excluded_domains(self):
         domains = ["google.com"]
         domains.extend(self.args.exclude_domains)
         return domains
+
+    def _get_domains_of_interest(self):
+        doi = self.args.only_domains
+        if len(doi):
+            return doi
+        return self._get_domains_of_interest_from_file()
+        
+    def _get_domains_of_interest_from_file(self):
+        doi = []
+        file = self.args.only_domains_from_file
+        if file:
+            with open(file) as f:
+                for r in f:
+                    domain = r.strip()
+                    doi.append(domain)
+        return doi
 
     def _get_search_engines(self):
         requested_search_engines = self.args.search_engines
