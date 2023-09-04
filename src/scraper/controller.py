@@ -31,6 +31,8 @@ class Controller:
         """ Handles the business logic """
         self.user_settings = UserSettings(args)
         self.initial_pages = self.initial_pages()
+        self.results = []
+        self.all_urls = []
 
     def initial_pages(self) -> list:
         """ Returns list of Pages, where each Page contains 
@@ -50,27 +52,39 @@ class Controller:
         query_string = scrub_query_string(query_string)
         return query_string
 
-    def search(self):
+    def start_process(self):
         """Controller main entry - Prepares and searches initial urls, creating more urls from
         the initial pages. Searches those and returns relevant results.
         """
         timeout = self.user_settings.timeout
         verbose = self.user_settings.verbose
+        debug = self.user_settings.debug
         for page in self.initial_pages:
+            self.all_urls.append(page.url)
             if self.user_settings.verbose:
                 print(f"parent URL::: {page.url}")
-            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose)
+            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, debug=debug)
+            self.results.append(page.soup)
         potential_pages = self._get_potential_pages(self.initial_pages)
         pages_of_interest = self._get_pages_of_interest(potential_pages)
         for page in pages_of_interest:
-            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose)
+            self.results.append(page.soup)
+            self.all_urls.append(page.url)
+            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, debug=debug)
             if page.soup:
                 try:
-                    print(page.soup.get_text())
-                except UnicodeEncodeError as e:
                     if verbose:
+                        print(page.soup.get_text())
+                except UnicodeEncodeError as e:
+                    if debug:
                         print(f"URL::: {page.url} | Error::: {e}")
                     continue
+
+        if self.user_settings.save_results:
+            self.save_results()
+
+        if self.user_settings.save_urls:
+            self.save_urls()
 
     def _get_potential_pages(self, parent_pages) -> list:
         """ Returns list of child Pages, where each child Page 
@@ -121,3 +135,20 @@ class Controller:
         else:
             pages = pages_of_interest
         return pages
+
+    def save_results(self):
+        with open("chips.txt", "w") as f:
+            for r in self.results:
+                try:
+                    f.write(r+"\n++++++++++++++++++++++++\n++++++++++++++++++++++++\n")
+                except TypeError:
+                    continue
+
+    def save_urls(self):
+        with open("all_urls.txt", "w") as f:
+            for url in self.all_urls:
+                try:
+                    f.write(url+"\n")
+                except TypeError as e:
+                    print(e)
+                    continue

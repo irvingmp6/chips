@@ -13,6 +13,12 @@ def get_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent(help_menu['desc'])
     )
+    cli.add_argument(
+        'search_phrases',
+        metavar='<SEARCH PHRASE(S)>',
+        nargs='+',
+        help=textwrap.dedent(help_menu['search_phrase'])
+    )
     mutually_exclusive_group = cli.add_mutually_exclusive_group()
     mutually_exclusive_group.add_argument(
         '--exclude-domains',
@@ -27,11 +33,20 @@ def get_args():
         help=textwrap.dedent(help_menu['only-domains'])
     )
     cli.add_argument(
-        'search_phrases',
-        metavar='<SEARCH PHRASE(S)>',
-        nargs='+',
-        help=textwrap.dedent(help_menu['search_phrase'])
-    )
+        '--debug', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['debug'])
+        )
+    cli.add_argument(
+        '--save-results', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['save-results'])
+        )
+    cli.add_argument(
+        '--save-urls', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['save-urls'])
+        )
     cli.add_argument(
         '--search-engines',
         nargs='+',
@@ -58,7 +73,7 @@ def get_args():
 def main():
     args = get_args()
     controller = Controller(args)
-    controller.search()
+    controller.start_process()
 
 if __name__ == "__main__":
     main()
