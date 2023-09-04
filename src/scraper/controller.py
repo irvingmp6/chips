@@ -3,7 +3,7 @@ from collections import namedtuple
 
 from bs4 import BeautifulSoup
 
-from src.config.user_settings import UserSettings
+from src.interface.user_settings import UserSettings
 from .scraper import Scraper
 
 url_encoding = {
@@ -58,19 +58,20 @@ class Controller:
         """
         timeout = self.user_settings.timeout
         verbose = self.user_settings.verbose
+        verbose_urls = self.user_settings.verbose_urls
         debug = self.user_settings.debug
         for page in self.initial_pages:
             self.all_urls.append(page.url)
-            if self.user_settings.verbose:
+            if verbose or verbose_urls:
                 print(f"parent URL::: {page.url}")
-            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, debug=debug)
+            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
             self.results.append(page.soup)
         potential_pages = self._get_potential_pages(self.initial_pages)
         pages_of_interest = self._get_pages_of_interest(potential_pages)
         for page in pages_of_interest:
             self.results.append(page.soup)
             self.all_urls.append(page.url)
-            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, debug=debug)
+            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
             if page.soup:
                 try:
                     if verbose:

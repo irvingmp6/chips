@@ -5,6 +5,7 @@ class UserSettings:
         self.domains_of_interest = self._get_domains_of_interest()
         self.timeout = args.timeout
         self.verbose = self.args.verbose
+        self.verbose_urls = self.args.verbose_urls
         self.search_phrases = self.args.search_phrases
         self.search_engines = self._get_search_engines()
         self.save_results = self.args.save_results

@@ -1,9 +1,10 @@
 from bs4 import BeautifulSoup
+from requests import ReadTimeout
 import requests
 
 class Scraper:
     @staticmethod
-    def scrape_website(url, timeout, verbose=False, debug=False):
+    def scrape_website(url, timeout, verbose=False, verbose_urls=False, debug=False):
         soup = ""
         try:
             response = requests.get(url, timeout=timeout)
@@ -16,11 +17,11 @@ class Scraper:
                 response = requests.get(url, headers=headers)
                 if response.status_code == 200:
                     soup = BeautifulSoup(response.text, 'lxml')
-                if verbose:
+                if verbose or verbose_urls:
                     print(f"URL::: {url} | Response::: {response.status_code}")
 
-        except requests.exceptions.ConnectTimeout as e:
-            if verbose:
+        except (requests.exceptions.ConnectTimeout, ReadTimeout) as e:
+            if debug:
                 print(f"URL::: {url} | Response::: {response.status_code}")
 
         return soup

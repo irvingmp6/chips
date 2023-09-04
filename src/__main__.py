@@ -71,6 +71,12 @@ def get_args():
     cli.add_argument(
         '--verbose', '-v', 
         action='store_true',
+        help=textwrap.dedent(help_menu['verbose'])
+        )
+    cli.add_argument(
+        '--verbose-urls', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['verbose-urls'])
         )
     cli.add_argument(
         '--version', '-V', action='version',

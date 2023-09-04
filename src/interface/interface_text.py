@@ -7,6 +7,7 @@ def get_help_menu() -> dict:
     menu['only-domains-from-file'] = """Specifies the domain(s) the search should focus on from txt file"""
     menu['timeout'] = """Specifies the timeout threshold per search request"""
     menu['verbose'] = """Shows activity as standard out"""
+    menu['verbose-urls'] = """Shows urls used as standard out"""
     menu['save-results'] = """Writes the text from each visited page to file called chips.txt"""
     menu['save-urls'] = """Writes the urls from each visited page to a file called all_urls.txt"""
     menu['search-engines'] = """list of specific search engines to be queried"""
