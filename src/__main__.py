@@ -29,6 +29,12 @@ def get_args():
         help=textwrap.dedent(help_menu['exclude-domains'])
     )
     mutually_exclusive_group.add_argument(
+        '--exclude-domains-from-file',
+        type=open_txt_file,
+        default=None,
+        help=textwrap.dedent(help_menu['exclude-domains-from-file'])
+    )
+    mutually_exclusive_group.add_argument(
         '--only-domains',
         nargs='+',
         default=[],
@@ -71,6 +77,12 @@ def get_args():
     cli.add_argument(
         '--verbose', '-v', 
         action='store_true',
+        help=textwrap.dedent(help_menu['verbose'])
+        )
+    cli.add_argument(
+        '--verbose-urls', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['verbose-urls'])
         )
     cli.add_argument(
         '--version', '-V', action='version',
