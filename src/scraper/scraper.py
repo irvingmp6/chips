@@ -1,14 +1,15 @@
 import requests
 from socket import timeout as stimeout
 from bs4 import BeautifulSoup
-from requests.exceptions import ReadTimeout
 
+from requests.exceptions import ReadTimeout
+from requests.exceptions import MissingSchema
 
 class Scraper:
     @staticmethod
     def scrape_website(url, timeout, verbose=False, verbose_urls=False, debug=False):
         soup = ""
-        status_code = "<NO STATUS CODE>"
+        status_code = "<NO RESPONSE>"
         try:
             response = requests.get(url, timeout=timeout)
             status_code = response.status_code
@@ -24,7 +25,7 @@ class Scraper:
                 if verbose or verbose_urls:
                     print(f"URL::: {url} | Response::: {status_code}")
 
-        except (requests.exceptions.ConnectTimeout, ReadTimeout, stimeout) as e:
+        except (requests.exceptions.ConnectTimeout, ReadTimeout, stimeout, MissingSchema) as e:
             if debug:
                 print(f"URL::: {url} | Response::: {status_code}")
 

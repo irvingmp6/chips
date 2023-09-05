@@ -158,6 +158,13 @@ class Controller:
                 pages.append(potential_page)
         return pages
 
+    def _remove_previsisted_pages(self, pages_of_interest):
+        pages = []
+        for page_of_interest in pages_of_interest:
+            if page_of_interest.url not in self.all_urls:
+                pages.append(page.url)
+        return pages
+
     def _only_include_domains_of_interest(self, pages_of_interest):
         pages = []
         domains_of_interest = self.user_settings.domains_of_interest
