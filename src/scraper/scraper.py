@@ -16,6 +16,8 @@ class Scraper:
 
             if status_code == 200:
                 soup = BeautifulSoup(response.text, 'lxml')
+            if verbose or verbose_urls:
+                print(f"URL::: {url} | Response::: {status_code}")
 
             else:
                 headers = {'User-Agent':'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36'}
