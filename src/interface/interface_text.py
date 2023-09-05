@@ -2,10 +2,12 @@ def get_help_menu() -> dict:
     menu = {}
     menu['debug'] = """Shows errors as standard out"""
     menu['desc'] = """A command-line tool that returns results from mainstream search engines."""
+    menu['levels'] = """Controlls the depth of the search. Defaults to 0, the initial search engine pages"""
     menu['exclude-domains'] = """Specifies the domain(s) the search should exclude"""
     menu['exclude-domains-from-file'] = """Specifies the domain(s) the search should exclude from text file"""
     menu['only-domains'] = """Specifies the domain(s) the search should focus on"""
     menu['only-domains-from-file'] = """Specifies the domain(s) the search should focus on from text file"""
+    menu['url-regex'] = """Regex pattern that controls the URLs searched"""
     menu['timeout'] = """Specifies the timeout threshold per search request"""
     menu['verbose'] = """Shows activity as standard out"""
     menu['verbose-urls'] = """Shows urls used as standard out"""

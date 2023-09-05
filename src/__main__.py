@@ -47,10 +47,21 @@ def get_args():
         help=textwrap.dedent(help_menu['only-domains-from-file'])
     )
     cli.add_argument(
+        '--levels', '-l',
+        default=0,
+        type=int,
+        help=textwrap.dedent(help_menu['levels'])
+        )   
+    cli.add_argument(
         '--debug', 
         action='store_true',
         help=textwrap.dedent(help_menu['debug'])
         )
+    cli.add_argument(
+        '--url-regex',
+        default=".{1,}",
+        help=textwrap.dedent(help_menu['url-regex'])
+    )
     cli.add_argument(
         '--save-results', 
         action='store_true',
