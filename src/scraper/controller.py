@@ -79,8 +79,12 @@ class Controller:
             if debug:
                 print(f"Search {level+1} set of pages")
             self.search_pages(pages_of_interest)
-            potential_pages = self._get_potential_pages(potential_pages)
+            potential_pages = self._get_potential_pages(pages_of_interest)
             pages_of_interest = self._get_pages_of_interest(potential_pages)
+
+        for page in pages_of_interest:
+            if verbose or verbose_urls:
+                print(f"URL::: {page.url}")
 
         if self.user_settings.save_results:
             self.save_results()
@@ -105,7 +109,8 @@ class Controller:
                             extra = url.find("&sa=U")
                             if extra != -1:
                                 url = url[:extra]
-                            child_pages.append(Page(search_engine, url, None))            
+                            if url not in self.all_urls:
+                                child_pages.append(Page(search_engine, url, None))            
                 except TypeError:
                     continue
         return child_pages
@@ -133,6 +138,7 @@ class Controller:
 
     def _get_pages_of_interest(self, candidates):
         pages_of_interest = self._remove_excluded_domains(candidates)
+        pages_of_interest = self._remove_previsisted_pages(pages_of_interest)
         pages_of_interest = self._filter_using_regex(pages_of_interest)
         pages_of_interest = self._only_include_domains_of_interest(pages_of_interest)
         return pages_of_interest
@@ -143,8 +149,12 @@ class Controller:
         if len(excluded_domains):
             for page in pages_of_interest:
                 for exlucded_domain in excluded_domains:
-                    if exlucded_domain not in page.url:
-                        pages.append(page)
+                    contains_domain = page.url.find(exlucded_domain) > -1
+                    if contains_domain:
+                        break
+                if contains_domain:
+                    continue
+                pages.append(page)
         else:
             pages = pages_of_interest
         return pages
@@ -156,6 +166,13 @@ class Controller:
         for potential_page in potential_pages:
             if regex.match(potential_page.url):
                 pages.append(potential_page)
+        return pages
+
+    def _remove_previsisted_pages(self, pages_of_interest):
+        pages = []
+        for page_of_interest in pages_of_interest:
+            if page_of_interest.url not in self.all_urls:
+                pages.append(page_of_interest)
         return pages
 
     def _only_include_domains_of_interest(self, pages_of_interest):
