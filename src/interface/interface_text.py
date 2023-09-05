@@ -2,6 +2,7 @@ def get_help_menu() -> dict:
     menu = {}
     menu['debug'] = """Shows errors as standard out"""
     menu['desc'] = """A command-line tool that returns results from mainstream search engines."""
+    menu['dive-in'] = """Opens the found URLs (prints output if --verbose was used)"""
     menu['exclude-domains'] = """Specifies the domain(s) the search should exclude"""
     menu['exclude-domains-from-file'] = """Specifies the domain(s) the search should exclude from text file"""
     menu['only-domains'] = """Specifies the domain(s) the search should focus on"""

@@ -47,6 +47,11 @@ def get_args():
         help=textwrap.dedent(help_menu['only-domains-from-file'])
     )
     cli.add_argument(
+        '--dive-in', 
+        action='store_true',
+        help=textwrap.dedent(help_menu['dive-in'])
+        )   
+    cli.add_argument(
         '--debug', 
         action='store_true',
         help=textwrap.dedent(help_menu['debug'])

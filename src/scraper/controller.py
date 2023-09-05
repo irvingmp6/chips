@@ -60,6 +60,8 @@ class Controller:
         verbose = self.user_settings.verbose
         verbose_urls = self.user_settings.verbose_urls
         debug = self.user_settings.debug
+        dive_in = self.user_settings.dive_in
+
         for page in self.initial_pages:
             self.all_urls.append(page.url)
             if verbose or verbose_urls:
@@ -68,11 +70,15 @@ class Controller:
             self.results.append(page.soup)
         potential_pages = self._get_potential_pages(self.initial_pages)
         pages_of_interest = self._get_pages_of_interest(potential_pages)
+
         for page in pages_of_interest:
-            self.results.append(page.soup)
             self.all_urls.append(page.url)
-            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
+            if verbose_urls:
+                print(f"parent URL::: {page.url}")
+            if dive_in:
+                page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
             if page.soup:
+                self.results.append(page.soup)
                 try:
                     if verbose:
                         print(page.soup.get_text())

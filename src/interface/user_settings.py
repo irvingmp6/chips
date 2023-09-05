@@ -11,6 +11,7 @@ class UserSettings:
         self.save_results = self.args.save_results
         self.save_urls = self.args.save_urls
         self.debug = self.args.debug
+        self.dive_in = self.args.dive_in
 
     def _get_excluded_domains(self):
         domains = ["google.com"]
