@@ -1,4 +1,5 @@
 import argparse
+import re
 from collections import namedtuple
 
 from bs4 import BeautifulSoup
@@ -60,23 +61,66 @@ class Controller:
         verbose = self.user_settings.verbose
         verbose_urls = self.user_settings.verbose_urls
         debug = self.user_settings.debug
-        dive_in = self.user_settings.dive_in
+        levels = self.user_settings.levels
 
+        if debug:
+            print(f"Search {0} set of pages")
         for page in self.initial_pages:
             self.all_urls.append(page.url)
             if verbose or verbose_urls:
-                print(f"parent URL::: {page.url}")
+                print(f"URL::: {page.url}")
             page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
             self.results.append(page.soup)
         potential_pages = self._get_potential_pages(self.initial_pages)
         pages_of_interest = self._get_pages_of_interest(potential_pages)
 
+
+        for level in range(0, levels):
+            if debug:
+                print(f"Search {level+1} set of pages")
+            self.search_pages(pages_of_interest)
+            potential_pages = self._get_potential_pages(potential_pages)
+            pages_of_interest = self._get_pages_of_interest(potential_pages)
+
+        if self.user_settings.save_results:
+            self.save_results()
+
+        if self.user_settings.save_urls:
+            self.save_urls()
+
+    def _get_potential_pages(self, parent_pages) -> list:
+        """ Returns list of child Pages, where each child Page 
+        is a link found in its Page
+        """
+        child_pages = []
+        for parent_page in parent_pages:
+            search_engine = parent_page.search_engine
+            if parent_page.soup:
+                try:
+                    for a in parent_page.soup.find_all('a', href=True):
+                        url = a['href']
+                        url_start = url.find("https")
+                        if url_start != -1:
+                            url = url[url_start:]
+                            extra = url.find("&sa=U")
+                            if extra != -1:
+                                url = url[:extra]
+                            child_pages.append(Page(search_engine, url, None))            
+                except TypeError:
+                    continue
+        return child_pages
+
+    def search_pages(self, pages_of_interest):
+        timeout = self.user_settings.timeout
+        verbose = self.user_settings.verbose
+        verbose_urls = self.user_settings.verbose_urls
+        debug = self.user_settings.debug
+
         for page in pages_of_interest:
             self.all_urls.append(page.url)
             if verbose_urls:
-                print(f"parent URL::: {page.url}")
-            if dive_in:
-                page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
+                print(f"URL::: {page.url}")
+            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
             if page.soup:
                 self.results.append(page.soup)
                 try:
@@ -87,35 +131,9 @@ class Controller:
                         print(f"URL::: {page.url} | Error::: {e}")
                     continue
 
-        if self.user_settings.save_results:
-            self.save_results()
-
-        if self.user_settings.save_urls:
-            self.save_urls()
-
-    def _get_potential_pages(self, parent_pages) -> list:
-        """ Returns list of child Pages, where each child Page 
-        is a link found in its parent Page
-        """
-        child_pages = []
-        for parent_page in parent_pages:
-            search_engine = parent_page.search_engine
-            try:
-                for a in parent_page.soup.find_all('a', href=True):
-                    url = a['href']
-                    url_start = url.find("https")
-                    if url_start != -1:
-                        url = url[url_start:]
-                        extra = url.find("&sa=U")
-                        if extra != -1:
-                            url = url[:extra]
-                        child_pages.append(Page(search_engine, url, None))            
-            except TypeError:
-                continue
-        return child_pages
-
     def _get_pages_of_interest(self, candidates):
         pages_of_interest = self._remove_excluded_domains(candidates)
+        pages_of_interest = self._filter_using_regex(pages_of_interest)
         pages_of_interest = self._only_include_domains_of_interest(pages_of_interest)
         return pages_of_interest
 
@@ -129,6 +147,15 @@ class Controller:
                         pages.append(page)
         else:
             pages = pages_of_interest
+        return pages
+    
+    def _filter_using_regex(self, potential_pages):
+        pages = []
+        regex_pattern = fr"{self.user_settings.url_regex}"
+        regex = re.compile(regex_pattern)
+        for potential_page in potential_pages:
+            if regex.match(potential_page.url):
+                pages.append(potential_page)
         return pages
 
     def _only_include_domains_of_interest(self, pages_of_interest):
