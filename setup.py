@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 from _version import __version__
 
 setup(
-    name='chips',
+    name='sweb',
     version=__version__,
     author = "Irving Martinez",
     packages=find_packages(),

@@ -11,7 +11,7 @@ from src.scraper.controller import Controller
 def get_args():
     help_menu = get_help_menu()
     cli = argparse.ArgumentParser(
-        prog='chips',
+        prog='sweb',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent(help_menu['desc'])
     )
