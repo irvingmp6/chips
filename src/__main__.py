@@ -23,28 +23,28 @@ def get_args():
     )
     mutually_exclusive_group = cli.add_mutually_exclusive_group()
     mutually_exclusive_group.add_argument(
-        '--exclude-domains',
+        '--exclude-urls-with',
         nargs='+',
         default=[],
-        help=textwrap.dedent(help_menu['exclude-domains'])
+        help=textwrap.dedent(help_menu['exclude-urls-with'])
     )
     mutually_exclusive_group.add_argument(
-        '--exclude-domains-from-file',
+        '--exclude-urls-with-from-file',
         type=open_txt_file,
         default=None,
-        help=textwrap.dedent(help_menu['exclude-domains-from-file'])
+        help=textwrap.dedent(help_menu['exclude-urls-with-from-file'])
     )
     mutually_exclusive_group.add_argument(
-        '--only-domains',
+        '--only-urls-with',
         nargs='+',
         default=[],
-        help=textwrap.dedent(help_menu['only-domains'])
+        help=textwrap.dedent(help_menu['only-urls-with'])
     )
     mutually_exclusive_group.add_argument(
-        '--only-domains-from-file',
+        '--only-urls-with-from-file',
         type=open_txt_file,
         default=None,
-        help=textwrap.dedent(help_menu['only-domains-from-file'])
+        help=textwrap.dedent(help_menu['only-urls-with-from-file'])
     )
     cli.add_argument(
         '--levels', '-l',
@@ -89,11 +89,6 @@ def get_args():
         '--verbose', '-v', 
         action='store_true',
         help=textwrap.dedent(help_menu['verbose'])
-        )
-    cli.add_argument(
-        '--verbose-urls', 
-        action='store_true',
-        help=textwrap.dedent(help_menu['verbose-urls'])
         )
     cli.add_argument(
         '--version', '-V', action='version',
