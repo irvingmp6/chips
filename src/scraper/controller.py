@@ -59,7 +59,6 @@ class Controller:
         """
         timeout = self.user_settings.timeout
         verbose = self.user_settings.verbose
-        verbose_urls = self.user_settings.verbose_urls
         debug = self.user_settings.debug
         levels = self.user_settings.levels
 
@@ -67,9 +66,7 @@ class Controller:
             print(f"Search {0} set of pages")
         for page in self.initial_pages:
             self.all_urls.append(page.url)
-            if verbose or verbose_urls:
-                print(f"URL::: {page.url}")
-            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
+            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, debug=debug)
             self.results.append(page.soup)
         potential_pages = self._get_potential_pages(self.initial_pages)
         pages_of_interest = self._get_pages_of_interest(potential_pages)
@@ -81,10 +78,6 @@ class Controller:
             self.search_pages(pages_of_interest)
             potential_pages = self._get_potential_pages(pages_of_interest)
             pages_of_interest = self._get_pages_of_interest(potential_pages)
-
-        for page in pages_of_interest:
-            if verbose or verbose_urls:
-                print(f"URL::: {page.url}")
 
         if self.user_settings.save_results:
             self.save_results()
@@ -118,38 +111,33 @@ class Controller:
     def search_pages(self, pages_of_interest):
         timeout = self.user_settings.timeout
         verbose = self.user_settings.verbose
-        verbose_urls = self.user_settings.verbose_urls
         debug = self.user_settings.debug
 
         for page in pages_of_interest:
             self.all_urls.append(page.url)
-            if verbose_urls:
-                print(f"URL::: {page.url}")
-            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, verbose_urls=verbose_urls, debug=debug)
+            page.soup = Scraper.scrape_website(page.url, timeout=timeout, verbose=verbose, debug=debug)
             if page.soup:
                 self.results.append(page.soup)
                 try:
                     if verbose:
                         print(page.soup.get_text())
                 except UnicodeEncodeError as e:
-                    if debug:
-                        print(f"URL::: {page.url} | Error::: {e}")
                     continue
 
     def _get_pages_of_interest(self, candidates):
-        pages_of_interest = self._remove_excluded_domains(candidates)
+        pages_of_interest = self._remove_excluded_urls(candidates)
         pages_of_interest = self._remove_previsisted_pages(pages_of_interest)
         pages_of_interest = self._filter_using_regex(pages_of_interest)
-        pages_of_interest = self._only_include_domains_of_interest(pages_of_interest)
+        pages_of_interest = self._only_include_urls_of_interest(pages_of_interest)
         return pages_of_interest
 
-    def _remove_excluded_domains(self, pages_of_interest):
+    def _remove_excluded_urls(self, pages_of_interest):
         pages = []
-        excluded_domains = self.user_settings.excluded_domains
-        if len(excluded_domains):
+        excluded_urls = self.user_settings.excluded_urls
+        if len(excluded_urls):
             for page in pages_of_interest:
-                for exlucded_domain in excluded_domains:
-                    contains_domain = page.url.find(exlucded_domain) > -1
+                for exlucded_url in excluded_urls:
+                    contains_domain = page.url.find(exlucded_url) > -1
                     if contains_domain:
                         break
                 if contains_domain:
@@ -175,12 +163,12 @@ class Controller:
                 pages.append(page_of_interest)
         return pages
 
-    def _only_include_domains_of_interest(self, pages_of_interest):
+    def _only_include_urls_of_interest(self, pages_of_interest):
         pages = []
-        domains_of_interest = self.user_settings.domains_of_interest
-        if len(domains_of_interest):
+        urls_of_interest = self.user_settings.urls_of_interest
+        if len(urls_of_interest):
             for page in pages_of_interest:
-                for domain_of_interest in domains_of_interest:
+                for domain_of_interest in urls_of_interest:
                     if domain_of_interest in page.url:
                         pages.append(page)
         else:

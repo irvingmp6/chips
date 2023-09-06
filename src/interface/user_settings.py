@@ -1,11 +1,10 @@
 class UserSettings:
     def __init__(self, args):
         self.args = args
-        self.excluded_domains = self._get_excluded_domains()
-        self.domains_of_interest = self._get_domains_of_interest()
+        self.excluded_urls = self._get_excluded_urls()
+        self.urls_of_interest = self._get_urls_of_interest()
         self.timeout = args.timeout
         self.verbose = self.args.verbose
-        self.verbose_urls = self.args.verbose_urls
         self.search_phrases = self.args.search_phrases
         self.search_engines = self._get_search_engines()
         self.save_results = self.args.save_results
@@ -14,18 +13,18 @@ class UserSettings:
         self.levels = self.args.levels
         self.url_regex = self.args.url_regex
 
-    def _get_excluded_domains(self):
+    def _get_excluded_urls(self):
         domains = ["google.com"]
-        domains.extend(self.args.exclude_domains)
-        file = self.args.exclude_domains_from_file
+        domains.extend(self.args.exclude_urls_with)
+        file = self.args.exclude_urls_with_from_file
         domains.extend(self._get_domains_from_file(file))
         return domains
 
-    def _get_domains_of_interest(self):
-        doi = self.args.only_domains
-        if len(doi):
-            return doi
-        file = self.args.only_domains_from_file
+    def _get_urls_of_interest(self):
+        urls = self.args.only_urls_with
+        if len(urls):
+            return urls
+        file = self.args.only_urls_with_from_file
         return self._get_domains_from_file(file)
         
     def _get_domains_from_file(self, file):

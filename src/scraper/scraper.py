@@ -7,7 +7,7 @@ from requests.exceptions import MissingSchema
 
 class Scraper:
     @staticmethod
-    def scrape_website(url, timeout, verbose=False, verbose_urls=False, debug=False):
+    def scrape_website(url, timeout, verbose=False, debug=False):
         soup = ""
         status_code = "<NO RESPONSE>"
         try:
@@ -16,7 +16,6 @@ class Scraper:
 
             if status_code == 200:
                 soup = BeautifulSoup(response.text, 'lxml')
-            if verbose or verbose_urls:
                 print(f"URL::: {url} | Response::: {status_code}")
 
             else:
@@ -24,7 +23,6 @@ class Scraper:
                 response = requests.get(url, headers=headers)
                 if status_code == 200:
                     soup = BeautifulSoup(response.text, 'lxml')
-                if verbose or verbose_urls:
                     print(f"URL::: {url} | Response::: {status_code}")
 
         except (requests.exceptions.ConnectTimeout, ReadTimeout, stimeout, MissingSchema) as e:
