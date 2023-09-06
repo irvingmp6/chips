@@ -18,7 +18,7 @@ setup(
     ],
     entry_points = {
         'console_scripts': [
-            'chips = src.__main__:main',
+            'sweb = src.__main__:main',
         ]
     }
 )
